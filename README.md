@@ -1,4 +1,3 @@
-Berikut adalah draf teks README.md yang profesional dan informatif untuk repositori proyekmu. Kamu bisa menyalin seluruh teks di bawah ini dan menempelkannya ke dalam file README.md di GitHub.
 
 🌱 PKM - Margorejo: Sistem Monitoring Tanah IoT
 PKM-Margorejo adalah sebuah program pembuatan alat pemantauan kualitas tanah berbasis Internet of Things (IoT). Proyek ini dirancang untuk membaca dan menganalisis parameter penting kesuburan tanah secara real-time menggunakan sensor NPK, yang kemudian datanya dikirimkan ke server agar dapat dipantau melalui dashboard web dari mana saja dan kapan saja.
