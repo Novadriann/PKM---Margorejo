@@ -5,7 +5,25 @@
 #include <ModbusMaster.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 
+// =====================================================
+// KONFIGURASI THINGSPEAK
+// =====================================================
+
+const char* THINGSPEAK_WRITE_KEY =
+    "IHSIHGGDMO77YQV0";
+
+const char* THINGSPEAK_URL =
+    "https://api.thingspeak.com/update";
+
+// Minimum 15 detik. 60 detik lebih aman.
+const unsigned long INTERVAL_THINGSPEAK =
+    30000;
+
+unsigned long waktuThingSpeakTerakhir =
+    0;
 // =====================================================
 // IDENTITAS PERANGKAT
 // =====================================================
@@ -46,6 +64,7 @@ IPAddress UDP_LAPTOP_IP(
 // Interval pengiriman UDP
 const unsigned long INTERVAL_UDP =
     1000;
+
 
 /*
   PERBAIKAN:
@@ -1661,6 +1680,128 @@ void kirimDataUdp() {
   }
 }
 
+void kirimDataThingSpeak() {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println(
+        "ThingSpeak: WiFi tidak terhubung, dilewati."
+    );
+
+    return;
+  }
+
+  String body =
+      "api_key=";
+
+  body += THINGSPEAK_WRITE_KEY;
+
+  /*
+    field1 sampai field5: data NPK.
+    Seluruhnya dilewati jika pembacaan Modbus gagal.
+  */
+
+  if (dataNpk.valid) {
+    body += "&field1=";
+    body += String(dataNpk.nitrogen);
+
+    body += "&field2=";
+    body += String(dataNpk.phosphorus);
+
+    body += "&field3=";
+    body += String(dataNpk.potassium);
+
+    body += "&field4=";
+    body += String(dataNpk.ph, 2);
+
+    body += "&field5=";
+    body += String(dataNpk.ec);
+  }
+
+  /*
+    field6: rata-rata kelembapan tanah.
+    Bernilai -1.0 jika tidak ada sensor yang valid.
+  */
+
+  if (rataRataKelembapanTanah >= 0.0) {
+    body += "&field6=";
+    body += String(rataRataKelembapanTanah, 1);
+  }
+
+  /*
+    field7 dan field8: suhu dan kelembapan luar.
+  */
+
+  if (!isnan(suhuLuarRata)) {
+    body += "&field7=";
+    body += String(suhuLuarRata, 2);
+  }
+
+  if (!isnan(lembapLuarRata)) {
+    body += "&field8=";
+    body += String(lembapLuarRata, 2);
+  }
+
+  /*
+    Jika tidak ada satu pun sensor yang valid,
+    tidak perlu mengirim apa pun.
+  */
+
+  if (body.indexOf("&field") < 0) {
+    Serial.println(
+        "ThingSpeak: tidak ada data valid, dilewati."
+    );
+
+    return;
+  }
+
+  WiFiClientSecure client;
+
+  client.setInsecure();
+
+  HTTPClient http;
+
+  http.setTimeout(5000);
+
+  if (!http.begin(client, THINGSPEAK_URL)) {
+    Serial.println(
+        "ThingSpeak: gagal memulai koneksi."
+    );
+
+    return;
+  }
+
+  http.addHeader(
+      "Content-Type",
+      "application/x-www-form-urlencoded"
+  );
+
+  int kode =
+      http.POST(body);
+
+  if (kode > 0) {
+    String balasan =
+        http.getString();
+
+    balasan.trim();
+
+    Serial.print("ThingSpeak: HTTP ");
+    Serial.print(kode);
+    Serial.print(" -> entry ");
+    Serial.println(balasan);
+
+    if (balasan == "0") {
+      Serial.println(
+          "ThingSpeak: DITOLAK. Periksa write key "
+          "atau interval pengiriman."
+      );
+    }
+  }
+  else {
+    Serial.print("ThingSpeak: error ");
+    Serial.println(kode);
+  }
+
+  http.end();
+}
 // =====================================================
 // TAMPIL DATA SERIAL
 // =====================================================
@@ -2312,6 +2453,9 @@ void setup() {
   waktuValveBerhenti =
       sekarang -
       JEDA_MINIMUM_VALVE;
+
+  waktuThingSpeakTerakhir = 
+      sekarang;
 }
 
 // =====================================================
@@ -2538,6 +2682,16 @@ void loop() {
         sekarang;
 
     kirimDataUdp();
+  }
+ if (
+      sekarang -
+      waktuThingSpeakTerakhir >=
+      INTERVAL_THINGSPEAK
+  ) {
+    waktuThingSpeakTerakhir =
+        sekarang;
+
+    kirimDataThingSpeak();
   }
 
   // ---------------------------------------------------
