@@ -611,6 +611,112 @@ def create_manual():
         box_type="info"
     )
 
+    doc.add_page_break()
+
+    # =========================================================================
+    # BAB VI: PANDUAN HARD PROGRAMMER & MANAJEMEN FIRMWARE
+    # =========================================================================
+    add_h1("BAB VI. PANDUAN HARD PROGRAMMER (FIRMWARE & GITHUB REPOSITORY)")
+
+    p = doc.add_paragraph()
+    p.add_run(
+        "Bab ini ditujukan khusus bagi teknisi pengembang perangkat lunak embedded (Hard Programmer) "
+        "yang bertanggung jawab atas instalasi, pembaruan (flashing), penyesuaian parameter, dan pemeliharaan "
+        "kode sumber firmware ESP32-S3 pada sistem NURTURE."
+    )
+
+    add_h2("6.1 Tutorial Mengunduh Kode Sumber dari Repositori GitHub")
+    p = doc.add_paragraph()
+    p.add_run(
+        "Seluruh kode sumber terbaru, skrip pengujian UDP, pustaka skematik, serta dokumentasi sistem "
+        "tersimpan secara terpusat pada repositori GitHub resmi tim pengabdian:\n"
+        "🔗 URL Repositori: https://github.com/Novadriann/PKM---Margorejo\n\n"
+        "Terdapat dua metode untuk mengunduh kode program ke komputer kerja:"
+    )
+
+    p = doc.add_paragraph()
+    p.add_run("Metode 1: Mengunduh File ZIP Langsung (Paling Mudah Tanpa Git)\n").bold = True
+    p.add_run(
+        "1. Buka tautan https://github.com/Novadriann/PKM---Margorejo melalui peramban web (Google Chrome / Firefox / Edge).\n"
+        "2. Klik tombol hijau bertuliskan '<> Code' yang berada di bagian kanan atas daftar file.\n"
+        "3. Pada menu dropdown yang muncul, pilih opsi 'Download ZIP'.\n"
+        "4. Setelah proses unduhan selesai, klik kanan file ZIP tersebut lalu pilih 'Extract All...' (Ekstrak Semua) ke folder kerja di komputer (contoh: C:\\PKM Margorejo\\).\n"
+        "5. Folder hasil ekstraksi siap dibuka langsung menggunakan Arduino IDE."
+    )
+
+    p = doc.add_paragraph()
+    p.add_run("Metode 2: Menggunakan Git Command Line (Untuk Programmer/Developer)\n").bold = True
+    p.add_run(
+        "Buka terminal Command Prompt (CMD) atau PowerShell, lalu jalankan perintah kloning berikut:\n"
+        "git clone https://github.com/Novadriann/PKM---Margorejo.git\n"
+        "Folder repositori akan otomatis terunduh lengkap dengan riwayat komit pengembangannya."
+    )
+
+    add_h2("6.2 Struktur Direktori & Fungsi Berkas Repositori")
+    p = doc.add_paragraph()
+    p.add_run("Berikut adalah peta struktur berkas kode program yang terdapat di dalam repositori:")
+
+    hdr_repo = ["Nama Berkas / Direktori", "Kategori", "Deskripsi & Peran dalam Sistem"]
+    data_repo = [
+        ["KODE_ESP_NODE1_SEMOGASUDAHFIX/", "Firmware Node 1", "Kode Arduino IDE untuk Stasiun 1: Membaca NPK, RTC, mengontrol Solenoid Valve, Kipas, dan Lampu UV."],
+        ["KODE_ESP_NODE2_SEMOGASUDAHFIX/", "Firmware Node 2", "Kode Arduino IDE untuk Stasiun 2: Membaca NPK, pemantauan baterai INA226 (arus positif saat charging), dan Kipas."],
+        ["cek_udp.py", "Script Python", "Alat monitoring telemetri real-time di laptop teknisi tanpa butuh internet (menangkap siaran UDP port 4210)."],
+        ["Buku_Panduan_Wiring_NURTURE_Margorejo.docx", "Dokumentasi", "Buku panduan teknis dan wiring lengkap untuk petani dan teknisi lapangan."],
+        ["save_data.py & platformio.ini", "Tooling", "Konfigurasi pendukung PlatformIO dan penyimpanan log telemetri."]
+    ]
+    create_custom_table([2.3, 1.2, 3.0], hdr_repo, data_repo)
+
+    add_h2("6.3 Konfigurasi Board ESP32-S3 pada Arduino IDE")
+    p = doc.add_paragraph()
+    p.add_run(
+        "Sebelum mengunggah kode, pastikan Arduino IDE telah terpasang board support 'esp32 by Espressif Systems' "
+        "dan pustaka (library) yang dibutuhkan telah diinstal melalui menu Tools -> Manage Libraries:\n"
+        "• RTClib (oleh Adafruit): Pengelolaan kalender dan waktu presisi modul DS3231 via I2C.\n"
+        "• DHT sensor library (oleh Adafruit): Pembacaan suhu dan kelembapan sensor DHT22.\n"
+        "• ModbusMaster (oleh Doc Walker / 4-20ma): Penanganan protokol Modbus RTU RS485 sensor NPK.\n"
+        "• INA226_WE (oleh Wolfgang Ewald): Pembacaan presisi arus, tegangan, dan daya PLTS via I2C.\n\n"
+        "Pengaturan Board Menu 'Tools' pada Arduino IDE wajib disesuaikan sebagai berikut:"
+    )
+
+    hdr_tools = ["Parameter Pengaturan (Tools)", "Nilai Pilihan (Configuration)", "Fungsi & Alasan Teknis"]
+    data_tools = [
+        ["Board", "ESP32S3 Dev Module", "Target chip mikrokontroler ESP32-S3 dual-core."],
+        ["USB CDC On Boot", "Enabled", "Mengaktifkan Serial Monitor langsung melalui port USB Type-C bawaan."],
+        ["Flash Size", "16MB (128Mb)", "Sesuai kapasitas memori flash fisik modul N16R8V."],
+        ["Partition Scheme", "16M Flash (3MB APP/9.9MB FATFS)", "Menyediakan ruang alokasi binary program dan sistem file yang besar."],
+        ["PSRAM", "OPI PSRAM", "Mengaktifkan memori eksternal 8MB PSRAM tipe Octal."],
+        ["CPU Frequency", "240MHz (WiFi)", "Kecepatan clock maksimal untuk pemrosesan kriptografi HTTPS & Wi-Fi."]
+    ]
+    create_custom_table([1.8, 2.0, 2.7], hdr_tools, data_tools)
+
+    doc.add_page_break()
+
+    add_h2("6.4 Penjelasan Arsitektur & Logika Kode (Hard Programmer Notes)")
+    p = doc.add_paragraph()
+    p.add_run(
+        "Firmware NURTURE ditulis dengan menerapkan standar pemrograman embedded modern untuk menjamin keandalan 24/7:\n\n"
+        "1. Paradigma Eksekusi Non-Blocking (millis() Scheduling):\n"
+        "   Program tidak menggunakan delay() untuk menjaga respon sistem. Seluruh tugas (pembacaan sensor tanah, NPK, RTC, kontrol aktuator, siaran UDP, dan pengiriman HTTPS) dijalankan menggunakan mesin status multi-interval berbasis millis().\n\n"
+        "2. Manajemen Protokol Modbus RTU RS485 (Sensor NPK 7-in-1):\n"
+        "   Komunikasi RS485 ditangani oleh HardwareSerial(1) pada pin GPIO17 (TX), GPIO18 (RX), dan GPIO14 (DIR DE/RE). Fungsi membaca 7 register secara berurutan: Kelembapan (reg 0), Suhu (reg 1), EC (reg 2), pH (reg 3), Nitrogen (reg 4), Fosfor (reg 5), dan Kalium (reg 6). Data EC langsung bertipe integer satuan µS/cm tanpa pembagian skala.\n\n"
+        "3. Logika Otomasi Terjadwal RTC & Perlindungan Fail-Safe:\n"
+        "   • Waktu RTC dibaca tepat 1 kali per detik di loop utama untuk menghindari bentrokan lalu lintas pada bus I2C.\n"
+        "   • Penyiraman Solenoid Valve aktif otomatis pada jam 07:00-07:10 (Pagi) dan 17:20-17:30 (Sore) selama 10 menit.\n"
+        "   • Fitur Safety Timeout 15 Menit: Jika valve terbuka melebihi 15 menit, mikrokontroler secara otomatis memutus daya valve secara paksa untuk melindungi lahan dari kebanjiran dan melindungi kumparan solenoid dari panas berlebih.\n\n"
+        "4. Logika Sirkulasi Termal Kipas Boks (Exhaust Fan):\n"
+        "   Jika sensor DHT22 dalam boks membaca suhu ≥ 34.0 °C, kipas dinyalakan selama 5 menit. Setelah siklus selesai, sistem mereset status siklus kipas sehingga jika boks masih terpapar panas matahari ekstrem, kipas langsung melanjutkan pendinginan pada siklus berikutnya.\n\n"
+        "5. Telemetri Ganda (Dual Telemetry Communication):\n"
+        "   • Telemetri Lokal (UDP Port 4210): Siaran paket data JSON lengkap setiap 1 detik ke alamat broadcast subnet WiFi. Bebas kuota internet dan dapat dipantau langsung di lapangan menggunakan script cek_udp.py.\n"
+        "   • Cloud IoT ThingSpeak: Mengunggah data setiap 16 detik (mendekati batas laju free tier ThingSpeak 15 detik). Pengunggahan dibagi menjadi Channel Utama dan Channel Pendukung berjeda 5 detik guna mencegah fragmentasi memori RAM (Heap exhaustion) saat negosiasi SSL/TLS."
+    )
+
+    add_callout(
+        "Catatan Perbedaan Kode Node 1 dan Node 2",
+        "• Node 1 (Stasiun Irigasi Utama): Mengendalikan Solenoid Valve pengairan (GPIO 5), Kipas (GPIO 39), Lampu UV (GPIO 15), 2 Probe Analog Tanah, dan Modul NPK 7-in-1.\n"
+        "• Node 2 (Stasiun Monitoring Sekunder): Menangani pembacaan NPK 7-in-1, kontrol Kipas, dan modul INA226 Baterai dengan rumus pembalikan polaritas arus (arus_baterai = -rawI / 1000.0) agar pengisian siang hari terdeteksi positif.",
+        box_type="info"
+    )
+
     # ---------------- SAVE DOCUMENT ----------------
     out_path = r"c:\PKM Margorejo\Buku_Panduan_Wiring_NURTURE_Margorejo.docx"
     doc.save(out_path)
