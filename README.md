@@ -8,8 +8,7 @@
 
 > **Program Pengabdian kepada Masyarakat (PKM) 2026**  
 > **Universitas Gadjah Mada**  
-> Lokasi Implementasi: Kalurahan Margorejo, Kapanewon Tempel, Kabupaten Sleman, D.I. Yogyakarta  
-> **Dosen Pembimbing:** Nur Achmad Sulistyo Putro, S.Si., M.Cs., Ph.D.
+> Lokasi Implementasi: Kalurahan Margorejo, Kapanewon Tempel, Kabupaten Sleman, D.I. Yogyakarta
 
 ---
 
@@ -95,6 +94,11 @@ Sistem menggunakan arsitektur pemantauan ganda:
 
 ```text
 ├── Buku_Panduan_Wiring_NURTURE_Margorejo.docx  # Buku Panduan Teknis & Wiring lengkap (Word)
+├── DESIGN MEKANIS/                             # Berkas CAD 3D Mekanis (STEP, STL, 3MF)
+│   ├── margorejo-Assembly final.step           # Desain perakitan mekanis utuh
+│   ├── margorejo-Mounting PCB.step             # Dudukan mounting PCB kontroler
+│   ├── margorejo_Dudukan Aki.step              # Desain braket dudukan baterai VRLA
+│   └── ...                                     # Mounting sensor & cable gland
 ├── KODE_ESP_NODE1_SEMOGASUDAHFIX/              # Firmware Arduino IDE untuk ESP32 Node 1
 │   └── KODE_ESP_NODE1_SEMOGASUDAHFIX.ino       # Kode program Node 1 (AGRI-01)
 ├── KODE_ESP_NODE2_SEMOGASUDAHFIX/              # Firmware Arduino IDE untuk ESP32 Node 2
@@ -138,7 +142,6 @@ Sistem menggunakan arsitektur pemantauan ganda:
 
 ## 👥 7. Tim Pengembang & Pengabdian
 
-* **Dosen Pembimbing:** Nur Achmad Sulistyo Putro, S.Si., M.Cs., Ph.D.
 * **Pelaksana:** Tim Program Pengabdian kepada Masyarakat (PKM) Kalurahan Margorejo 2026
 * **Institusi:** Departemen Ilmu Komputer dan Elektronika (DIKE), Fakultas MIPA, Universitas Gadjah Mada
 
