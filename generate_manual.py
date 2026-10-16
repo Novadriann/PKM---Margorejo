@@ -658,8 +658,8 @@ def create_manual():
 
     hdr_repo = ["Nama Berkas / Direktori", "Kategori", "Deskripsi & Peran dalam Sistem"]
     data_repo = [
-        ["KODE_ESP_NODE1_SEMOGASUDAHFIX/", "Firmware Node 1", "Kode Arduino IDE untuk Stasiun 1: Membaca NPK, RTC, mengontrol Solenoid Valve, Kipas, dan Lampu UV."],
-        ["KODE_ESP_NODE2_SEMOGASUDAHFIX/", "Firmware Node 2", "Kode Arduino IDE untuk Stasiun 2: Membaca NPK, pemantauan baterai INA226 (arus positif saat charging), dan Kipas."],
+        ["Kode_Node1/", "Firmware Node 1", "Kode Arduino IDE untuk Stasiun 1: Membaca NPK, RTC, mengontrol Solenoid Valve, Kipas, dan Lampu UV."],
+        ["Kode_Node2/", "Firmware Node 2", "Kode Arduino IDE untuk Stasiun 2: Membaca NPK, pemantauan baterai INA226 (arus positif saat charging), dan Kipas."],
         ["cek_udp.py", "Script Python", "Alat monitoring telemetri real-time di laptop teknisi tanpa butuh internet (menangkap siaran UDP port 4210)."],
         ["Buku_Panduan_Wiring_NURTURE_Margorejo.docx", "Dokumentasi", "Buku panduan teknis dan wiring lengkap untuk petani dan teknisi lapangan."],
         ["save_data.py & platformio.ini", "Tooling", "Konfigurasi pendukung PlatformIO dan penyimpanan log telemetri."]

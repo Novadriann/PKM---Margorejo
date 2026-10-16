@@ -99,10 +99,10 @@ Sistem menggunakan arsitektur pemantauan ganda:
 │   ├── margorejo-Mounting PCB.step             # Dudukan mounting PCB kontroler
 │   ├── margorejo_Dudukan Aki.step              # Desain braket dudukan baterai VRLA
 │   └── ...                                     # Mounting sensor & cable gland
-├── KODE_ESP_NODE1_SEMOGASUDAHFIX/              # Firmware Arduino IDE untuk ESP32 Node 1
-│   └── KODE_ESP_NODE1_SEMOGASUDAHFIX.ino       # Kode program Node 1 (AGRI-01)
-├── KODE_ESP_NODE2_SEMOGASUDAHFIX/              # Firmware Arduino IDE untuk ESP32 Node 2
-│   └── KODE_ESP_NODE2_SEMOGASUDAHFIX.ino       # Kode program Node 2 (AGRI-02)
+├── Kode_Node1/                                 # Firmware Arduino IDE untuk ESP32 Node 1
+│   └── Kode_Node1.ino                          # Kode program Node 1 (AGRI-01)
+├── Kode_Node2/                                 # Firmware Arduino IDE untuk ESP32 Node 2
+│   └── Kode_Node2.ino                          # Kode program Node 2 (AGRI-02)
 ├── cek_udp.py                                  # Script Python monitoring telemetri UDP lokal
 ├── generate_manual.py                          # Script generator dokumen Word buku panduan
 ├── docx_helpers.py                             # Modul helper pembuat format tabel docx
@@ -116,7 +116,7 @@ Sistem menggunakan arsitektur pemantauan ganda:
 ## 🚀 6. Panduan Penggunaan & Pengujian
 
 ### A. Pengunggahan Firmware ke ESP32-S3
-1. Buka folder `KODE_ESP_NODE1_SEMOGASUDAHFIX/` atau `KODE_ESP_NODE2_SEMOGASUDAHFIX/` di **Arduino IDE**.
+1. Buka file `Kode_Node1/Kode_Node1.ino` atau `Kode_Node2/Kode_Node2.ino` di **Arduino IDE**.
 2. Pasang board profile: **ESP32 by Espressif Systems** (pilih board: `ESP32S3 Dev Module`).
 3. Konfigurasi board di Arduino IDE:
    * **USB CDC On Boot:** `Enabled`
